@@ -33,10 +33,10 @@ type Logger struct {
 
 type YearIncomeStatement struct {
 	Year                         int
-	TotalRevenue                 int64
-	CostOfRevenue                int64
-	SellingGeneralAdministrative int64
-	InterestExpense              int64
+	totalRevenue                 int64
+	costOfRevenue                int64
+	sellingGeneralAdministrative int64
+	interestExpense              int64
 }
 
 type IncomeMargins[T any] interface {
@@ -82,10 +82,10 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	y := &YearIncomeStatement{}
 
 	// Clone raw values
-	y.CostOfRevenue = x.CostOfRevenue.Raw
-	y.TotalRevenue = x.TotalRevenue.Raw
-	y.SellingGeneralAdministrative = x.SellingGeneralAdministrative.Raw
-	y.InterestExpense = x.InterestExpense.Raw
+	y.costOfRevenue = x.CostOfRevenue.Raw
+	y.totalRevenue = x.TotalRevenue.Raw
+	y.sellingGeneralAdministrative = x.SellingGeneralAdministrative.Raw
+	y.interestExpense = x.InterestExpense.Raw
 
 	d, err := time.Parse("2006-01-02", x.EndDate.Fmt)
 	y.Year = d.Year()
@@ -97,20 +97,36 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	return y
 }
 
+func (I *YearIncomeStatement) TotalRevenue() int64 {
+	return I.totalRevenue
+}
+
+func (I *YearIncomeStatement) CostOfRevenue() int64 {
+	return I.costOfRevenue
+}
+
 func (I *YearIncomeStatement) GrossProfit() int64 {
-	return I.TotalRevenue - I.CostOfRevenue
+	return I.TotalRevenue() - I.CostOfRevenue()
 }
 
 func (I *YearIncomeStatement) GrossProfitMargin() float64 {
-	return float64(I.GrossProfit()) / float64(I.TotalRevenue)
+	return float64(I.GrossProfit()) / float64(I.TotalRevenue())
+}
+
+func (I *YearIncomeStatement) SellingGeneralAdministrative() int64 {
+	return I.sellingGeneralAdministrative
 }
 
 func (I *YearIncomeStatement) SellingGeneralAdministrativeMargin() float64 {
-	return float64(I.SellingGeneralAdministrative) / float64(I.GrossProfit())
+	return float64(I.SellingGeneralAdministrative()) / float64(I.GrossProfit())
+}
+
+func (I *YearIncomeStatement) InterestExpense() int64 {
+	return I.interestExpense
 }
 
 func (I *YearIncomeStatement) InterestExpenseMargin() float64 {
-	return float64(I.InterestExpense) / float64(I.GrossProfit())
+	return float64(I.InterestExpense()) / float64(I.GrossProfit())
 }
 
 func (I *ValueRating) GrossProfit() Rating {
