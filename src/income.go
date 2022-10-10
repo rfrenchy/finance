@@ -46,7 +46,7 @@ type IncomeMargins[T any] interface {
 }
 
 type IncomeAttributes[T any] interface {
-	GrossProfit() T	
+	GrossProfit() T
 }
 
 type IncomeOptions struct {
@@ -102,27 +102,15 @@ func (I *YearIncomeStatement) GrossProfit() int64 {
 }
 
 func (I *YearIncomeStatement) GrossProfitMargin() float64 {
-	gp := I.GrossProfit()
-
-	gpm := float64(gp) / float64(I.TotalRevenue)
-
-	return gpm
+	return float64(I.GrossProfit()) / float64(I.TotalRevenue)
 }
 
 func (I *YearIncomeStatement) SellingGeneralAdministrativeMargin() float64 {
-	gp := I.GrossProfit()
-
-	sgam := float64(I.SellingGeneralAdministrative) / float64(gp)	
-
-	return sgam
+	return float64(I.SellingGeneralAdministrative) / float64(I.GrossProfit())
 }
 
 func (I *YearIncomeStatement) InterestExpenseMargin() float64 {
-	gp := I.GrossProfit()
-
-	iem := float64(I.InterestExpense) / float64(gp)	
-
-	return iem
+	return float64(I.InterestExpense) / float64(I.GrossProfit())
 }
 
 func (I *ValueRating) GrossProfit() Rating {
