@@ -1,0 +1,49 @@
+
+(A) Research and Development rating @income
+(A) Depreciation rating @income
+(A) Sale of Assets @income
+(A) Income before Tax @income
+(A) Income Taxes paid @income
+(A) Net Earnings @income
+(A) Per-Share Earnings @income
+
+(B) Assets @balance
+(B) Current Asset Cycle @balance
+(B) Cash @balance
+(B) Inventory @balance
+(B) Net receivables @balance
+(B) Prepaid Expenses + Other @balance
+(B) Total Current Assets and Current Ratio @balance
+(B) Property, Plant, and Equipment @balance
+(B) Goodwill @balance
+(B) Intangible Assets @balance
+(B) Long-Term Investments @balance
+(B) Other Long-Term Assets @balance
+(B) Total Assetse and Return on Total Assets @balance
+(B) Current Liabilities @balance
+(B) Accounts Payable, Accrued Expenses, Other Current Liabilities @balance
+(B) Short-Term Debt @balance
+(B) Long-Term Debt @balance
+(B) Total Current Liabilities and Ratio @balance
+(B) Long-Term Debt ratio @balance
+(B) Deferred Income Tax, Minority Intereset and Other Liabilities @balance
+(B) Total Liabilities and Debt to Shareholders Equity Ratio @balance
+(B) Shareholders Equity / Book Value @balance
+(B) Preferred and Common Stock @balance
+(B) Retained Earnings @balance
+(B) Treasury Stock @balance
+(B) Return on Shareholders Equity @balance
+(B) Leverage @balance
+
+(B) Capital Expenditures @cashflow
+(B) Stock Buybacks @cashflow
+(B) Equity Bond @cashflow
+(B) Increasing Yield @cashflow
+(B) Valuing @cashflow
+(B) Buy Time @cashflow
+(B) Sell Time @cashflow
+
+x (A) Process all years, not just 2018 @income
+x (A) Interest Expenses @income
+x (A) Sellling General and Admin expenses rating @income
+x (A) Gross Profit Margin Rating @income
