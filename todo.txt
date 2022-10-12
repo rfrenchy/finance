@@ -1,6 +1,3 @@
-x (A) Income before Tax @income
-(A) Income Taxes paid @income
-(A) Net Earnings @income
 (A) Per-Share Earnings @income
 (B) Assets @balance
 (B) Current Asset Cycle @balance
@@ -40,7 +37,10 @@ x (A) Income before Tax @income
 (C) Find Sale of Assets API @income
 
 x (A) Gross Profit Margin Rating @income
+x (A) Income Taxes paid @income
+x (A) Income before Tax @income
 x (A) Interest Expenses @income
+x (A) Net Earnings @income
 x (A) Process all years, not just 2018 @income
 x (A) Research and Development rating @income
 x (A) Sellling General and Admin expenses rating @income

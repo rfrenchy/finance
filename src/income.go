@@ -44,6 +44,7 @@ type YearIncomeStatement struct {
 	researchDevelopment          int64
 	incomeBeforeTax              int64
 	incomeTaxExpense             int64
+	netEarnings int64
 }
 
 type IncomeMargins[T any] interface {
@@ -96,6 +97,7 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	y.researchDevelopment = x.ResearchDevelopment.Raw
 	y.incomeBeforeTax = x.IncomeBeforeTax.Raw
 	y.incomeTaxExpense = x.IncomeTaxExpense.Raw
+	y.netEarnings = x.NetEarnings.Raw
 
 	d, err := time.Parse("2006-01-02", x.EndDate.Fmt)
 	y.Year = d.Year()
@@ -107,52 +109,69 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	return y
 }
 
+// TotalRevenue
 func (I *YearIncomeStatement) TotalRevenue() int64 {
 	return I.totalRevenue
 }
 
+// CostOfRevenue 
 func (I *YearIncomeStatement) CostOfRevenue() int64 {
 	return I.costOfRevenue
 }
 
+// GrossProfit
 func (I *YearIncomeStatement) GrossProfit() int64 {
 	return I.TotalRevenue() - I.CostOfRevenue()
 }
 
+// GrossProfitMargin
 func (I *YearIncomeStatement) GrossProfitMargin() float64 {
 	return float64(I.GrossProfit()) / float64(I.TotalRevenue())
 }
 
+// SellingGeneralAdministrative
 func (I *YearIncomeStatement) SellingGeneralAdministrative() int64 {
 	return I.sellingGeneralAdministrative
 }
 
+// SellingGeneralAdministrativeMargin
 func (I *YearIncomeStatement) SellingGeneralAdministrativeMargin() float64 {
 	return float64(I.SellingGeneralAdministrative()) / float64(I.GrossProfit())
 }
 
+// InterestExpense
 func (I *YearIncomeStatement) InterestExpense() int64 {
 	return I.interestExpense
 }
 
+// InterestExpenseMargin
 func (I *YearIncomeStatement) InterestExpenseMargin() float64 {
 	return float64(I.InterestExpense()) / float64(I.GrossProfit())
 }
 
+// ResearchDevelopment
 func (I *YearIncomeStatement) ResearchDevelopment() int64 {
 	return I.researchDevelopment
 }
 
+// ResearchDevelopmentMargin
 func (I *YearIncomeStatement) ResearchDevelopmentMargin() float64 {
 	return float64(I.ResearchDevelopment()) / float64(I.GrossProfit())
 }
 
+// IncomeBeforeTax
 func (I *YearIncomeStatement) IncomeBeforeTax() int64 {
 	return I.incomeBeforeTax
 }
 
+// IncomeTaxExpense
 func (I *YearIncomeStatement) IncomeTaxExpense() int64 {
 	return I.incomeTaxExpense
+}
+
+// NetEarnings calculates (Gross Profit - Expenses - Taxes)
+func (I *YearIncomeStatement) NetEarnings() int64 {
+	return I.netEarnings
 }
 
 func (I *ValueRating) GrossProfit() Rating {
@@ -209,7 +228,21 @@ func (I *LegitimacyRating) IncomeTaxExpense() Rating {
 	// t := I.statement.IncomeTaxExpense()
 
 	// Compare against income taxes paid
-	// Review how much tax they should have to pay in UK/Country?
+	// Review how much tax they should have to pay in UK/Country??? 19% in the UK???
+
+	return BAD
+}
+
+func (I *IncomeStatement) NetEarnings() Rating {
+	
+	I.Y2018.NetEarnings()
+	I.Y2019.NetEarnings()
+	I.Y2020.NetEarnings()
+	I.Y2021.NetEarnings()
+	I.Y2022.NetEarnings()
+
+	// compare all, look for upward trend
+
 
 	return BAD
 }
@@ -236,4 +269,8 @@ func (I *Logger) ResearchDevelopmentMargin() {
 
 func (I *Logger) IncomeBeforeTax() {
 	log.Println("IncomeBeforeTax", I.statement.IncomeBeforeTax())
+}
+
+func (I *Logger) NetEarnings() {
+	log.Println("NetEarnings", I.statement.NetEarnings())
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -12,9 +13,9 @@ type YahooIncomeClient interface {
 }
 
 type YahooAPIClient struct {
-	Key  string
-	Host string
-	URL  string
+	Key    string
+	Host   string
+	Origin string
 }
 
 type MockYahooClient struct{}
@@ -29,6 +30,7 @@ type YahooIncomeStatementHistory struct {
 	ResearchDevelopment          YahooIncomeStatementItem `json:"researchDevelopment"`
 	IncomeBeforeTax              YahooIncomeStatementItem `json:"incomeBeforeTax"`
 	IncomeTaxExpense             YahooIncomeStatementItem `json:"incomeTaxExpense"`
+	NetEarnings                  YahooIncomeStatementItem `json:"netIncome"`
 }
 
 type YahooIncomeStatementItem struct {
@@ -45,9 +47,9 @@ type YahooIncomeStatementV15 struct {
 
 func NewYahooAPIClient() *YahooAPIClient {
 	return &YahooAPIClient{
-		Key:  os.Getenv("RAPID_API_YAHOO_KEY"),
-		Host: "yahoo-finance15.p.rapidapi.com",
-		URL:  "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/AAPL/income-statement",
+		Key:    os.Getenv("RAPID_API_YAHOO_KEY"),
+		Host:   "yahoo-finance15.p.rapidapi.com",
+		Origin: "https://yahoo-finance15.p.rapidapi.com/api/yahoo",
 	}
 }
 
@@ -73,7 +75,9 @@ func (m *MockYahooClient) Get(code string) (*YahooIncomeStatementV15, error) {
 }
 
 func (y *YahooAPIClient) Get(code string) (*YahooIncomeStatementV15, error) {
-	req, _ := http.NewRequest("GET", y.URL, nil)
+	url := fmt.Sprintf("%s/qu/quote/%s/income-statement", y.Origin, code)
+
+	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("X-RapidAPI-Key", y.Key)
 	req.Header.Add("X-RapidAPI-Host", y.Host)
 
