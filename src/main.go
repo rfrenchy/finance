@@ -16,9 +16,13 @@ func main() {
 
 	r := ValueRating{x.Y2018}
 
-	// println(x.GrossProfit())
+	println(r.statement.GrossProfit())
 	// println(r.SellingGeneralAdministrative())
-	println(r.InterestExpenseMargin())
+	// println(r.InterestExpenseMargin())
+
+	println(r.statement.ResearchDevelopmentMargin())
+	println(r.statement.IncomeBeforeTax())
+	println(r.statement.IncomeTaxExpense())
 
 	println("END")
 }

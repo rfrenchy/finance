@@ -18,6 +18,10 @@ type ValueRating struct {
 	statement *YearIncomeStatement
 }
 
+type LegitimacyRating struct {
+	statement *YearIncomeStatement
+}
+
 // Rating rates an IncomeStatement attribute from GOOD, OK to BAD
 type Rating int
 
@@ -39,6 +43,7 @@ type YearIncomeStatement struct {
 	interestExpense              int64
 	researchDevelopment          int64
 	incomeBeforeTax              int64
+	incomeTaxExpense             int64
 }
 
 type IncomeMargins[T any] interface {
@@ -90,6 +95,7 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	y.interestExpense = x.InterestExpense.Raw
 	y.researchDevelopment = x.ResearchDevelopment.Raw
 	y.incomeBeforeTax = x.IncomeBeforeTax.Raw
+	y.incomeTaxExpense = x.IncomeTaxExpense.Raw
 
 	d, err := time.Parse("2006-01-02", x.EndDate.Fmt)
 	y.Year = d.Year()
@@ -145,6 +151,10 @@ func (I *YearIncomeStatement) IncomeBeforeTax() int64 {
 	return I.incomeBeforeTax
 }
 
+func (I *YearIncomeStatement) IncomeTaxExpense() int64 {
+	return I.incomeTaxExpense
+}
+
 func (I *ValueRating) GrossProfit() Rating {
 	gpm := I.statement.GrossProfitMargin()
 
@@ -191,6 +201,15 @@ func (I *ValueRating) ResearchDevelopmentMargin() Rating {
 	} else if r > 0.1 && r < 0.25 {
 		return OK
 	}
+
+	return BAD
+}
+
+func (I *LegitimacyRating) IncomeTaxExpense() Rating {
+	// t := I.statement.IncomeTaxExpense()
+
+	// Compare against income taxes paid
+	// Review how much tax they should have to pay in UK/Country?
 
 	return BAD
 }
