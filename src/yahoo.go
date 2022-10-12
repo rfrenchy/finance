@@ -6,10 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type YahooIncomeClient interface {
 	Get(code string) (*YahooIncomeStatementV15, error)
+}
+
+type YahooStocksClient interface {
+	Get(code string) int
 }
 
 type YahooAPIClient struct {
@@ -33,6 +38,10 @@ type YahooIncomeStatementHistory struct {
 	NetEarnings                  YahooIncomeStatementItem `json:"netIncome"`
 }
 
+type YahooStockStatement struct {
+	SharesOutstanding int64 `json:"sharesOutstanding"`
+}
+
 type YahooIncomeStatementItem struct {
 	Raw     int64  `json:"raw"`
 	Fmt     string `json:"fmt"`
@@ -43,6 +52,12 @@ type YahooIncomeStatementV15 struct {
 	Root struct {
 		IncomeStatementHistory []YahooIncomeStatementHistory `json:"incomeStatementHistory"`
 	} `json:"incomeStatementHistory"`
+}
+
+type YahooStockV97 struct {
+	Root struct {
+		YahooStockStatement YahooStockStatement `json:"data"`
+	}
 }
 
 func NewYahooAPIClient() *YahooAPIClient {
@@ -98,4 +113,29 @@ func (y *YahooAPIClient) Get(code string) (*YahooIncomeStatementV15, error) {
 	err = json.Unmarshal(body, &x)
 
 	return x, nil
+}
+
+func (y *YahooAPIClient) GetStockInfo(code string) (*YahooStockV97, error) {
+	payload := strings.NewReader("symbol=" + code)
+
+	req, _ := http.NewRequest("POST", "https://yahoo-finance97.p.rapidapi.com/stock-info", payload)
+	req.Header.Add("X-RapidAPI-Key", y.Key)
+	req.Header.Add("X-RapidAPI-Host", y.Host)
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, err
+	}
+	var x *YahooStockV97
+	err = json.Unmarshal(body, &x)
+
+	return x, err
 }

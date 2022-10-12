@@ -23,6 +23,7 @@ func main() {
 	println(r.statement.ResearchDevelopmentMargin())
 	println(r.statement.IncomeBeforeTax())
 	println(r.statement.IncomeTaxExpense())
+	println(r.statement.NetEarnings())
 
 	println("END")
 }

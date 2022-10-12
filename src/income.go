@@ -44,7 +44,7 @@ type YearIncomeStatement struct {
 	researchDevelopment          int64
 	incomeBeforeTax              int64
 	incomeTaxExpense             int64
-	netEarnings int64
+	netEarnings                  int64
 }
 
 type IncomeMargins[T any] interface {
@@ -114,7 +114,7 @@ func (I *YearIncomeStatement) TotalRevenue() int64 {
 	return I.totalRevenue
 }
 
-// CostOfRevenue 
+// CostOfRevenue
 func (I *YearIncomeStatement) CostOfRevenue() int64 {
 	return I.costOfRevenue
 }
@@ -234,7 +234,7 @@ func (I *LegitimacyRating) IncomeTaxExpense() Rating {
 }
 
 func (I *IncomeStatement) NetEarnings() Rating {
-	
+
 	I.Y2018.NetEarnings()
 	I.Y2019.NetEarnings()
 	I.Y2020.NetEarnings()
@@ -243,6 +243,7 @@ func (I *IncomeStatement) NetEarnings() Rating {
 
 	// compare all, look for upward trend
 
+	// also compare to competitors ??
 
 	return BAD
 }
