@@ -1,4 +1,4 @@
-(A) Income before Tax @income
+x (A) Income before Tax @income
 (A) Income Taxes paid @income
 (A) Net Earnings @income
 (A) Per-Share Earnings @income
