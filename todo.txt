@@ -1,12 +1,7 @@
-
-(A) Research and Development rating @income
-(A) Depreciation rating @income
-(A) Sale of Assets @income
 (A) Income before Tax @income
 (A) Income Taxes paid @income
 (A) Net Earnings @income
 (A) Per-Share Earnings @income
-
 (B) Assets @balance
 (B) Current Asset Cycle @balance
 (B) Cash @balance
@@ -34,7 +29,6 @@
 (B) Treasury Stock @balance
 (B) Return on Shareholders Equity @balance
 (B) Leverage @balance
-
 (B) Capital Expenditures @cashflow
 (B) Stock Buybacks @cashflow
 (B) Equity Bond @cashflow
@@ -42,8 +36,11 @@
 (B) Valuing @cashflow
 (B) Buy Time @cashflow
 (B) Sell Time @cashflow
+(C) Find Depreciation rating API @income
+(C) Find Sale of Assets API @income
 
-x (A) Process all years, not just 2018 @income
-x (A) Interest Expenses @income
-x (A) Sellling General and Admin expenses rating @income
 x (A) Gross Profit Margin Rating @income
+x (A) Interest Expenses @income
+x (A) Process all years, not just 2018 @income
+x (A) Research and Development rating @income
+x (A) Sellling General and Admin expenses rating @income

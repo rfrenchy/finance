@@ -37,6 +37,7 @@ type YearIncomeStatement struct {
 	costOfRevenue                int64
 	sellingGeneralAdministrative int64
 	interestExpense              int64
+	researchDevelopment int64
 }
 
 type IncomeMargins[T any] interface {
@@ -86,6 +87,7 @@ func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement 
 	y.totalRevenue = x.TotalRevenue.Raw
 	y.sellingGeneralAdministrative = x.SellingGeneralAdministrative.Raw
 	y.interestExpense = x.InterestExpense.Raw
+	y.researchDevelopment = x.ResearchDevelopment.Raw
 
 	d, err := time.Parse("2006-01-02", x.EndDate.Fmt)
 	y.Year = d.Year()
@@ -129,6 +131,14 @@ func (I *YearIncomeStatement) InterestExpenseMargin() float64 {
 	return float64(I.InterestExpense()) / float64(I.GrossProfit())
 }
 
+func (I *YearIncomeStatement) ResearchDevelopment() int64 {
+	return I.researchDevelopment
+}
+
+func (I *YearIncomeStatement) ResearchDevelopmentMargin() float64 {
+	return float64(I.ResearchDevelopment()) / float64(I.GrossProfit())
+}
+
 func (I *ValueRating) GrossProfit() Rating {
 	gpm := I.statement.GrossProfitMargin()
 
@@ -167,6 +177,18 @@ func (I *ValueRating) InterestExpenseMargin() Rating {
 	return BAD
 }
 
+func (I *ValueRating) ResearchDevelopmentMargin() Rating {
+	r := I.statement.ResearchDevelopmentMargin()
+
+	if r < 0.1 {
+		return GOOD
+	} else if r > 0.1 && r < 0.25 {
+		return OK
+	}
+
+	return BAD
+}
+
 func (I *Logger) GrossProfit() {
 	log.Println("GrossProfit", I.statement.GrossProfit())
 }
@@ -181,4 +203,8 @@ func (I *Logger) SellingGeneralAdministrativeMargin() {
 
 func (I *Logger) InterestExpenseMargin() {
 	log.Printf("InterestExpenseMargin (Interest Expense / Gross Profit)%f\n", I.statement.InterestExpenseMargin())
+}
+
+func (I *Logger) ResearchDevelopmentMargin() {
+	log.Printf("ResearchDevelopmentMargin ( Research Development / Gross Profit)%f\n", I.statement.ResearchDevelopmentMargin())
 }

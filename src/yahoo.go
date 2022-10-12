@@ -26,6 +26,7 @@ type YahooIncomeStatementHistory struct {
 	SellingGeneralAdministrative YahooIncomeStatementItem `json:"sellingGeneralAdministrative"`
 	InterestExpense              YahooIncomeStatementItem `json:"interestExpense"`
 	EndDate                      YahooIncomeStatementItem `json:"endDate"`
+	ResearchDevelopment          YahooIncomeStatementItem `json:"researchDevelopment"`
 }
 
 type YahooIncomeStatementItem struct {
