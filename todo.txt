@@ -1,5 +1,8 @@
-(C) API for Total Shares @income
-(A) Per-Share Earnings @income
+x (A) Input Balance Sheet @yahoo
+x (A) Per-Share Earnings @income
+
+(A) Make Stock info per year, rather than latest @yahoo
+
 (B) Assets @balance
 (B) Current Asset Cycle @balance
 (B) Cash @balance
@@ -37,6 +40,7 @@
 (C) Find Depreciation rating API @income
 (C) Find Sale of Assets API @income
 
+
 x (A) Gross Profit Margin Rating @income
 x (A) Income Taxes paid @income
 x (A) Income before Tax @income
@@ -45,3 +49,4 @@ x (A) Net Earnings @income
 x (A) Process all years, not just 2018 @income
 x (A) Research and Development rating @income
 x (A) Sellling General and Admin expenses rating @income
+x (C) API for Total Shares @income

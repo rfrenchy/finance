@@ -3,27 +3,37 @@ package main
 func main() {
 	println("START")
 
-	m := MockYahooClient{}
+	m := YahooMockClient{}
 
-	y, err := m.Get("AAPC")
+	y, err := m.GetIncomeStatement("AAPC")
 
 	if err != nil {
 		panic(err)
 	}
 
-	// NewIncomeStatement(y)
-	x := NewIncomeStatement(y)
+	s, err := m.GetStockInfo("AAPC")
 
-	r := ValueRating{x.Y2018}
+	if err != nil {
+		panic(err)
+	}
 
-	println(r.statement.GrossProfit())
+	println("SharesOutstanding")
+	println(s.Root.SharesOutstanding)
+
+	x := NewIncomeStatement(y, s)
+
+	println(x.Y2018.PerShareEarnings())
+
+	// r := ValueRating{x.Y2018}
+
+	// println(r.statement.GrossProfit())
 	// println(r.SellingGeneralAdministrative())
 	// println(r.InterestExpenseMargin())
 
-	println(r.statement.ResearchDevelopmentMargin())
-	println(r.statement.IncomeBeforeTax())
-	println(r.statement.IncomeTaxExpense())
-	println(r.statement.NetEarnings())
+	// println(r.statement.ResearchDevelopmentMargin())
+	// println(r.statement.IncomeBeforeTax())
+	// println(r.statement.IncomeTaxExpense())
+	// println(r.statement.NetEarnings())
 
 	println("END")
 }

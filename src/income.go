@@ -45,6 +45,7 @@ type YearIncomeStatement struct {
 	incomeBeforeTax              int64
 	incomeTaxExpense             int64
 	netEarnings                  int64
+	sharesOutstanding            int64
 }
 
 type IncomeMargins[T any] interface {
@@ -61,11 +62,11 @@ type IncomeOptions struct {
 	logging bool
 }
 
-func NewIncomeStatement(y *YahooIncomeStatementV15) *IncomeStatement {
+func NewIncomeStatement(y *YahooIncomeStatementV15, ysi *YahooStockInfo) *IncomeStatement {
 	s := &IncomeStatement{}
 
 	for _, x := range y.Root.IncomeStatementHistory {
-		y := NewYearIncomeStatement(x)
+		y := NewYearIncomeStatement(x, ysi)
 
 		switch y.Year {
 		case 2018:
@@ -86,20 +87,22 @@ func NewIncomeStatement(y *YahooIncomeStatementV15) *IncomeStatement {
 	return s
 }
 
-func NewYearIncomeStatement(x YahooIncomeStatementHistory) *YearIncomeStatement {
+func NewYearIncomeStatement(yish YahooIncomeStatementHistory, ysi *YahooStockInfo) *YearIncomeStatement {
 	y := &YearIncomeStatement{}
 
 	// Clone raw values
-	y.costOfRevenue = x.CostOfRevenue.Raw
-	y.totalRevenue = x.TotalRevenue.Raw
-	y.sellingGeneralAdministrative = x.SellingGeneralAdministrative.Raw
-	y.interestExpense = x.InterestExpense.Raw
-	y.researchDevelopment = x.ResearchDevelopment.Raw
-	y.incomeBeforeTax = x.IncomeBeforeTax.Raw
-	y.incomeTaxExpense = x.IncomeTaxExpense.Raw
-	y.netEarnings = x.NetEarnings.Raw
+	y.costOfRevenue = yish.CostOfRevenue.Raw
+	y.totalRevenue = yish.TotalRevenue.Raw
+	y.sellingGeneralAdministrative = yish.SellingGeneralAdministrative.Raw
+	y.interestExpense = yish.InterestExpense.Raw
+	y.researchDevelopment = yish.ResearchDevelopment.Raw
+	y.incomeBeforeTax = yish.IncomeBeforeTax.Raw
+	y.incomeTaxExpense = yish.IncomeTaxExpense.Raw
+	y.netEarnings = yish.NetEarnings.Raw
 
-	d, err := time.Parse("2006-01-02", x.EndDate.Fmt)
+	y.sharesOutstanding = ysi.Root.SharesOutstanding
+
+	d, err := time.Parse("2006-01-02", yish.EndDate.Fmt)
 	y.Year = d.Year()
 
 	if err != nil {
@@ -172,6 +175,16 @@ func (I *YearIncomeStatement) IncomeTaxExpense() int64 {
 // NetEarnings calculates (Gross Profit - Expenses - Taxes)
 func (I *YearIncomeStatement) NetEarnings() int64 {
 	return I.netEarnings
+}
+
+// SharesOutstanding returns the total amount of available shares
+func (I *YearIncomeStatement) SharesOutstanding() int64 {
+	return I.sharesOutstanding
+}
+
+// PerShareEarnings returns the total earnings per share (NetEarnings / SharesOutstanding)
+func (I *YearIncomeStatement) PerShareEarnings() float64 {
+	return float64(I.NetEarnings()) / float64(I.SharesOutstanding())
 }
 
 func (I *ValueRating) GrossProfit() Rating {
@@ -248,6 +261,21 @@ func (I *IncomeStatement) NetEarnings() Rating {
 	return BAD
 }
 
+func (I *IncomeStatement) PerShareEarnings() Rating {
+	
+	I.Y2018.PerShareEarnings()
+	I.Y2019.PerShareEarnings()
+	I.Y2020.PerShareEarnings()
+	I.Y2021.PerShareEarnings()
+	I.Y2022.PerShareEarnings()
+
+	// compare all, look for upward trend
+
+	// also compare to competitors ??
+
+	return BAD
+}
+
 func (I *Logger) GrossProfit() {
 	log.Println("GrossProfit", I.statement.GrossProfit())
 }
@@ -274,4 +302,12 @@ func (I *Logger) IncomeBeforeTax() {
 
 func (I *Logger) NetEarnings() {
 	log.Println("NetEarnings", I.statement.NetEarnings())
+}
+
+func (I *Logger) SharesOutstanding() {
+	log.Println("SharesOutstanding", I.statement.SharesOutstanding())
+}
+
+func (I *Logger) PerShareEarnings() {
+	log.Printf("PerShareEarnings ( Net Earnings / Shares Outstanding)%f\n", I.statement.PerShareEarnings())
 }
