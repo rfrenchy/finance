@@ -1,15 +1,10 @@
-x (A) Input Balance Sheet @yahoo
-x (A) Per-Share Earnings @income
-
 (A) Make Stock info per year, rather than latest @yahoo
-
 (B) Assets @balance
 (B) Current Asset Cycle @balance
 (B) Cash @balance
 (B) Inventory @balance
 (B) Net receivables @balance
 (B) Prepaid Expenses + Other @balance
-(B) Total Current Assets and Current Ratio @balance
 (B) Property, Plant, and Equipment @balance
 (B) Goodwill @balance
 (B) Intangible Assets @balance
@@ -23,7 +18,6 @@ x (A) Per-Share Earnings @income
 (B) Total Current Liabilities and Ratio @balance
 (B) Long-Term Debt ratio @balance
 (B) Deferred Income Tax, Minority Intereset and Other Liabilities @balance
-(B) Total Liabilities and Debt to Shareholders Equity Ratio @balance
 (B) Shareholders Equity / Book Value @balance
 (B) Preferred and Common Stock @balance
 (B) Retained Earnings @balance
@@ -40,13 +34,19 @@ x (A) Per-Share Earnings @income
 (C) Find Depreciation rating API @income
 (C) Find Sale of Assets API @income
 
-
+x (A) Add CLI code 
+x (A) Current Ratio @balance
 x (A) Gross Profit Margin Rating @income
 x (A) Income Taxes paid @income
 x (A) Income before Tax @income
+x (A) Input Balance Sheet @yahoo
 x (A) Interest Expenses @income
 x (A) Net Earnings @income
+x (A) Per-Share Earnings @income
 x (A) Process all years, not just 2018 @income
 x (A) Research and Development rating @income
 x (A) Sellling General and Admin expenses rating @income
+x (A) Short-tem vs Long-Term debt @balance
+x (A) Total Current Assets @balance
+x (B) Total Liabilities and Debt to Shareholders Equity Ratio @balance
 x (C) API for Total Shares @income

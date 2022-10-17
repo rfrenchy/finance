@@ -1,39 +1,57 @@
 package main
 
-func main() {
-	println("START")
+import (
+	"os"
 
+	"github.com/urfave/cli/v2"
+)
+
+type config struct {
+	businessSymbol string
+}
+
+func main() {
+	var conf config
+
+	app := &cli.App{
+		Name:  "Finance",
+		Usage: "Analyse investment viability of a publicly traded business",
+		Action: func(c *cli.Context) error {
+			return run(conf)
+
+		},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "symbol",
+				Aliases:     []string{"s"},
+				Required:    true,
+				Destination: &conf.businessSymbol,
+				Usage:       "Business symbol of the company to analyse. Example: AAPC for Apple",
+			},
+		},
+	}
+
+	app.Run(os.Args)
+
+}
+
+func run(conf config) error {
+	// m := YahooAPIClient{}
 	m := YahooMockClient{}
 
-	y, err := m.GetIncomeStatement("AAPC")
+	y, err := m.GetIncomeStatement(conf.businessSymbol)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	s, err := m.GetStockInfo("AAPC")
+	s, err := m.GetStockInfo(conf.businessSymbol)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	println("SharesOutstanding")
-	println(s.Root.SharesOutstanding)
+	NewIncomeStatement(y, s)
 
-	x := NewIncomeStatement(y, s)
-
-	println(x.Y2018.PerShareEarnings())
-
-	// r := ValueRating{x.Y2018}
-
-	// println(r.statement.GrossProfit())
-	// println(r.SellingGeneralAdministrative())
-	// println(r.InterestExpenseMargin())
-
-	// println(r.statement.ResearchDevelopmentMargin())
-	// println(r.statement.IncomeBeforeTax())
-	// println(r.statement.IncomeTaxExpense())
-	// println(r.statement.NetEarnings())
-
-	println("END")
+	return nil
 }

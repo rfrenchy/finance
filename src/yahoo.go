@@ -57,28 +57,27 @@ type YahooStockInfo struct {
 }
 
 type YahooBalanceSheetV1 struct {
-	Root struct {
-		TotalLiabilities int `json:"totalLiabilities"`
-	} `json:"data"`
+	Root []YahooBalanceItem `json:"data"`
+}
+
+type YahooBalanceItem struct {
+	Name  string `json:"index"`
+	Y2018 int64  `json:"1538179200000"` // Timestamps might change all the time?? ...
+	Y2019 int64  `json:"1569628800000"`
+	Y2020 int64  `json:"1601078400000"`
+	Y2021 int64  `json:"1632528000000"`
 }
 
 type YahooCashFlowV1 struct {
-	Root struct {
-	} `json:"data"`
+	Root []YahooCashItem `json:"data"`
 }
 
-type YahooCashFlow struct {
-	Investments                           int
-	ChangeToLiabilities                   int
-	TotalCashFlowsFromInvestingActivities int
-	NetBorrowings                         int
-	TotalCashFromFinancingActivities      int
-	ChangeToOperatingActivities           int
-	IssuanceOfStock                       int
-	NetIncome                             int
-	ChangeInCash                          int
-	RepurchaseOfStock                     int
-	Depreciation                          int
+type YahooCashItem struct {
+	Name  string `json:"index"`
+	Y2018 int64  `json:"1538179200000"` // Timestamps might change all the time?? ...
+	Y2019 int64  `json:"1569628800000"`
+	Y2020 int64  `json:"1601078400000"`
+	Y2021 int64  `json:"1632528000000"`
 }
 
 func NewYahooAPIClient() *YahooAPIClient {
@@ -90,7 +89,7 @@ func NewYahooAPIClient() *YahooAPIClient {
 }
 
 func (m *YahooMockClient) GetIncomeStatement(code string) (*YahooIncomeStatementV15, error) {
-	ic, err := os.Open("./income.json")
+	ic, err := os.Open("./json/income.json")
 
 	if err != nil {
 		return nil, err
@@ -162,7 +161,7 @@ func (y *YahooAPIClient) GetStockInfo(code string) (*YahooStockInfo, error) {
 }
 
 func (m *YahooMockClient) GetStockInfo(code string) (*YahooStockInfo, error) {
-	ic, err := os.Open("./stock.json")
+	ic, err := os.Open("./json/stock.json")
 
 	if err != nil {
 		return nil, err
@@ -212,7 +211,7 @@ func (y *YahooAPIClient) GetBalanceSheet(code string) (*YahooBalanceSheetV1, err
 }
 
 func (y *YahooMockClient) GetBalanceSheet(code string) (*YahooBalanceSheetV1, error) {
-	ic, err := os.Open("./balance.json")
+	ic, err := os.Open("./json/balance.json")
 
 	if err != nil {
 		return nil, err

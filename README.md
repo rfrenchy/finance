@@ -1,8 +1,10 @@
 # Finance
 
+Analyse investment viability of a publicly traded business
+
 ## Usage
 
-## Install
+`go run . --code AAPC`
 
 ## Config
 

@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"math"
 	"time"
+
+	"github.com/leekchan/accounting"
 )
 
 type IncomeStatement struct {
@@ -10,26 +14,8 @@ type IncomeStatement struct {
 	Y2019 *YearIncomeStatement
 	Y2020 *YearIncomeStatement
 	Y2021 *YearIncomeStatement
-	Y2022 *YearIncomeStatement
+	// Y2022 *YearIncomeStatement
 }
-
-// ValueRating rates the attributes of an Income Statement in terms of Value Investing
-type ValueRating struct {
-	statement *YearIncomeStatement
-}
-
-type LegitimacyRating struct {
-	statement *YearIncomeStatement
-}
-
-// Rating rates an IncomeStatement attribute from GOOD, OK to BAD
-type Rating int
-
-const (
-	GOOD Rating = iota
-	OK
-	BAD
-)
 
 type Logger struct {
 	statement *YearIncomeStatement
@@ -77,8 +63,8 @@ func NewIncomeStatement(y *YahooIncomeStatementV15, ysi *YahooStockInfo) *Income
 			s.Y2020 = y
 		case 2021:
 			s.Y2021 = y
-		case 2022:
-			s.Y2022 = y
+		// case 2022:
+		// 	s.Y2022 = y
 		default:
 			panic("Year not implemented yet")
 		}
@@ -187,87 +173,113 @@ func (I *YearIncomeStatement) PerShareEarnings() float64 {
 	return float64(I.NetEarnings()) / float64(I.SharesOutstanding())
 }
 
-func (I *ValueRating) GrossProfit() Rating {
-	gpm := I.statement.GrossProfitMargin()
+func (I *IncomeStatement) PerShareEarningsMean() float64 {
+	x := []float64{I.Y2018.PerShareEarnings(), I.Y2019.PerShareEarnings(), I.Y2020.PerShareEarnings(), I.Y2021.PerShareEarnings()}
 
-	if gpm < 0.4 {
-		return GOOD
-	} else if gpm < 0.375 {
-		return OK
-	} else {
-		return BAD
-	}
-}
-
-func (I *ValueRating) SellingGeneralAdministrativeMargin() Rating {
-	m := I.statement.SellingGeneralAdministrativeMargin()
-
-	if m < 0.3 {
-		return GOOD
-	} else if m > 0.3 && m < 0.79 {
-		return OK
-	} else if m > 0.8 {
-		return BAD
+	var sum float64 = 0
+	for _, e := range x {
+		sum += e
 	}
 
-	return BAD
+	return sum / float64(len(x))
 }
 
-func (I *ValueRating) InterestExpenseMargin() Rating {
-	m := I.statement.InterestExpenseMargin()
+func (I *IncomeStatement) PerShareEarningsSTD() float64 {
+	mean := I.PerShareEarningsMean()
 
-	if m < 0.15 {
-		return GOOD
-	} else if m > 0.15 && m < 0.35 {
-		return OK
+	ac := accounting.Accounting{Symbol: "$", Precision: 2}
+
+	fmt.Println("2018 PerShareEarnings", ac.FormatMoney(I.Y2018.PerShareEarnings()))
+	fmt.Println("2019 PerShareEarnings", ac.FormatMoney(I.Y2019.PerShareEarnings()))
+	fmt.Println("2020 PerShareEarnings", ac.FormatMoney(I.Y2020.PerShareEarnings()))
+	fmt.Println("2021 PerShareEarnings", ac.FormatMoney(I.Y2021.PerShareEarnings()))
+
+	// deviations
+	d2018 := float64(I.Y2018.PerShareEarnings()) - mean
+	d2019 := float64(I.Y2019.PerShareEarnings()) - mean
+	d2020 := float64(I.Y2020.PerShareEarnings()) - mean
+	d2021 := float64(I.Y2021.PerShareEarnings()) - mean
+
+	// fmt.Println("2018 PerShareEarnings", ac.FormatMoney(I.Y2018.PerShareEarnings()))
+	// fmt.Println("2019 PerShareEarnings", ac.FormatMoney(I.Y2019.PerShareEarnings()))
+	// fmt.Println("2020 PerShareEarnings", ac.FormatMoney(I.Y2020.PerShareEarnings()))
+	// fmt.Println("2021 PerShareEarnings", ac.FormatMoney(I.Y2021.PerShareEarnings()))
+
+	sample := 4 - 1
+
+	variance := (math.Pow(d2018, 2) + math.Pow(d2019, 2) + math.Pow(d2020, 2) + math.Pow(d2021, 2)) / float64(sample)
+	fmt.Println("Variance", ac.FormatMoney(variance))
+
+	// standard deviation
+	std := math.Sqrt(variance)
+	fmt.Println("std", ac.FormatMoney(std))
+
+	return std
+}
+
+func (I *IncomeStatement) NetEarningsMean() float64 {
+	x := []int64{I.Y2018.NetEarnings(), I.Y2019.NetEarnings(), I.Y2020.NetEarnings(), I.Y2021.NetEarnings()}
+
+	// fmt.Println("2018 NetEarnings", ac.FormatMoney(I.Y2018.NetEarnings()))
+	// fmt.Println("2019 NetEarnings", ac.FormatMoney(I.Y2019.NetEarnings()))
+	// fmt.Println("2020 NetEarnings", ac.FormatMoney(I.Y2020.NetEarnings()))
+	// fmt.Println("2021 NetEarnings", ac.FormatMoney(I.Y2021.NetEarnings()))
+
+	var sum float64 = 0
+	for _, e := range x {
+		sum += float64(e)
 	}
 
-	return BAD
+	return sum / float64(len(x))
 }
 
-func (I *ValueRating) ResearchDevelopmentMargin() Rating {
-	r := I.statement.ResearchDevelopmentMargin()
+// NetEarningsSTD calculate the Standard Deviation of NetEarnings over x years
+func (I *IncomeStatement) NetEarningsSTD() float64 {
+	// ac := accounting.Accounting{Symbol: "$", Precision: 2 }
 
-	if r < 0.1 {
-		return GOOD
-	} else if r > 0.1 && r < 0.25 {
-		return OK
-	}
+	mean := I.NetEarningsMean()
+	// fmt.Println("Mean", ac.FormatMoney(mean))
 
-	return BAD
-}
+	// deviations
+	d2018 := float64(I.Y2018.NetEarnings()) - mean
+	d2019 := float64(I.Y2019.NetEarnings()) - mean
+	d2020 := float64(I.Y2020.NetEarnings()) - mean
+	d2021 := float64(I.Y2021.NetEarnings()) - mean
 
-func (I *LegitimacyRating) IncomeTaxExpense() Rating {
-	// t := I.statement.IncomeTaxExpense()
+	sample := 4 - 1
 
-	// Compare against income taxes paid
-	// Review how much tax they should have to pay in UK/Country??? 19% in the UK???
+	variance := (math.Pow(d2018, 2) + math.Pow(d2019, 2) + math.Pow(d2020, 2) + math.Pow(d2021, 2)) / float64(sample)
+	// fmt.Println("Variance", ac.FormatMoney(variance))
 
-	return BAD
+	// standard deviation
+	std := math.Sqrt(variance)
+	// fmt.Println("std", ac.FormatMoney(std))
+
+	return std
 }
 
 func (I *IncomeStatement) NetEarnings() Rating {
+	ac := accounting.Accounting{Symbol: "$", Precision: 2}
 
-	I.Y2018.NetEarnings()
-	I.Y2019.NetEarnings()
-	I.Y2020.NetEarnings()
-	I.Y2021.NetEarnings()
-	I.Y2022.NetEarnings()
+	std := I.NetEarningsSTD()
 
-	// compare all, look for upward trend
+	fmt.Println("std", ac.FormatMoney(std))
 
+	// have to be within standard deviation?
+	// and not below it consistently?
+	// standard deviation within x
 	// also compare to competitors ??
 
 	return BAD
 }
 
 func (I *IncomeStatement) PerShareEarnings() Rating {
-	
+
 	I.Y2018.PerShareEarnings()
 	I.Y2019.PerShareEarnings()
 	I.Y2020.PerShareEarnings()
 	I.Y2021.PerShareEarnings()
-	I.Y2022.PerShareEarnings()
+	// I.Y2022.PerShareEarnings()
 
 	// compare all, look for upward trend
 
