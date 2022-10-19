@@ -1,3 +1,4 @@
+(A) implement goreportcard.com 
 (A) Make Stock info per year, rather than latest @yahoo
 (B) Assets @balance
 (B) Current Asset Cycle @balance
